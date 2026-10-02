@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مغامرة التاء في مدينة اللغة العربية - الأستاذة عوادي هاجر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-bg: #e0f7fa;
+            --card-bg: #ffffff;
+            --accent-color: #0288d1;
+            --accent-hover: #01579b;
+            --text-color: #263238;
+            --correct-color: #2e7d32;
+            --wrong-color: #c62828;
+            --gold-color: #fbc02d;
+            --font-family: 'Tajawal', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, #b2ebf2 0%, #e1f5fe 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            direction: rtl;
+        }
+
+        /* Container */
+        .game-container {
+            width: 100%;
+            max-width: 800px;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 4px solid #81d4fa;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 600px;
+        }
+
+        /* Header / Logo */
+        header {
+            background: #0288d1;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #01579b;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+            background: white;
+            color: #0288d1;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+        }
+
+        .logo-text {
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .stat-item {
+            background: #01579b;
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .audio-btn {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: white;
+        }
+
+        /* Screen Wrapper */
+        .screen {
+            display: none;
+            padding: 25px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            text-align: center;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Rules Card Modal */
+        .rule-btn {
+            position: absolute;
+            top: 70px;
+            left: 15px;
+            background: #fbc02d;
+            color: #333;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #f57f17;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 90%;
+            max-height: 85%;
+            overflow-y: auto;
+            border: 4px solid #0288d1;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: right;
+        }
+
+        .modal-card h3 {
+            color: #0288d1;
+            text-align: center;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+        }
+
+        .rule-section {
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border-right: 4px solid #0288d1;
+        }
+
+        .rule-section h4 {
+            color: #d81b60;
+            margin-bottom: 5px;
+        }
+
+        .rule-section ul {
+            list-style-type: square;
+            padding-right: 20px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .close-modal-btn {
+            display: block;
+            margin: 10px auto 0;
+            background: #e53935;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        /* Main Elements */
+        h1 { font-size: 2rem; color: #0288d1; margin-bottom: 15px; }
+        h2 { font-size: 1.5rem; color: #37474f; margin-bottom: 15px; }
+
+        .mascot-box {
+            background: #e1f5fe;
+            border: 2px dashed #0288d1;
+            border-radius: 16px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .mascot-avatar {
+            font-size: 2.5rem;
+        }
+
+        .mascot-text {
+            font-size: 1.1rem;
+            color: #01579b;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .btn {
+            background: #0288d1;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #01579b;
+            transition: all 0.1s ease;
+            font-family: inherit;
+        }
+
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #01579b;
+        }
+
+        .btn-success { background: #43a047; box-shadow: 0 5px 0 #2e7d32; }
+        .btn-success:active { box-shadow: 0 2px 0 #2e7d32; }
+
+        /* Question Displays */
+        .word-display {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #1565c0;
+            letter-spacing: 2px;
+            margin: 25px 0;
+            background: #f5f5f5;
+            padding: 15px 40px;
+            border-radius: 20px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .options-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 10px;
+        }
+
+        .option-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            background: #ffffff;
+            color: #0288d1;
+            border: 3px solid #0288d1;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #0288d1;
+            font-family: inherit;
+            transition: all 0.1s;
+        }
+
+        .option-btn:hover {
+            background: #e1f5fe;
+        }
+
+        .reason-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .reason-btn {
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            background: #fff;
+            color: #37474f;
+            border: 2px solid #cfd8dc;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: right;
+            box-shadow: 0 3px 0 #cfd8dc;
+            font-family: inherit;
+            transition: all 0.1s;
+        }
+
+        .reason-btn:hover {
+            border-color: #0288d1;
+            background: #f4fbfd;
+        }
+
+        /* Feedback Area */
+        .feedback-box {
+            min-height: 80px;
+            margin-top: 15px;
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .feedback-correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 2px solid #a5d6a7;
+        }
+
+        .feedback-wrong {
+            background: #ffebee;
+            color: #c62828;
+            border: 2px solid #ef9a9a;
+        }
+
+        /* Timer Bar for Speed Challenge */
+        .timer-container {
+            width: 100%;
+            max-width: 500px;
+            height: 16px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .timer-bar {
+            height: 100%;
+            background: #ff9800;
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        /* Certificate Styling */
+        .certificate {
+            background: #fffde7;
+            border: 8px double #fbc02d;
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .certificate h3 {
+            color: #f57f17;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .cert-body {
+            font-size: 1.1rem;
+            margin: 15px 0;
+            line-height: 1.8;
+            color: #424242;
+        }
+
+        .cert-footer {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 2px dashed #fbc02d;
+            font-weight: bold;
+            color: #e65100;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar-top {
+            width: 100%;
+            height: 6px;
+            background: #b2ebf2;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #0288d1;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 600px) {
+            .word-display { font-size: 2.5rem; padding: 10px 20px; }
+            .option-btn { font-size: 1.6rem; padding: 10px; }
+            h1 { font-size: 1.5rem; }
+            .mascot-text { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <!-- Header -->
+        <header>
+            <div class="logo-box">
+                <div class="logo-icon">ت</div>
+                <div class="logo-text">الأستاذة عوادي هاجر</div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat-item">⭐ <span id="score">0</span></div>
+                <div class="stat-item">🎯 <span id="progress-text">0/10</span></div>
+                <button class="audio-btn" id="audio-toggle" onclick="toggleAudio()">🔊</button>
+            </div>
+        </header>
+
+        <div class="progress-bar-top">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+
+        <!-- Rule Button -->
+        <button class="rule-btn" onclick="openRuleModal()">📖 تذكّر القاعدة</button>
+
+        <!-- Rule Modal -->
+        <div class="modal-overlay" id="rule-modal">
+            <div class="modal-card">
+                <h3>درس: التاء المربوطة والتاء المفتوحة 📖</h3>
+                
+                <div class="rule-section">
+                    <h4>التاء المفتوحة (ت) وتكتب في:</h4>
+                    <ul>
+                        <li><strong>الأفعال:</strong> مثل (خَرَجَتْ، لَعِبَتْ، كَتَبَتْ).</li>
+                        <li><strong>جمع المؤنث السالم:</strong> مثل (المُعَلِّمَاتُ، الطَّبِيبَاتُ).</li>
+                        <li><strong>الاسم الثلاثي ساكن الوسط:</strong> مثل (بِنْتٌ، زَيْتٌ).</li>
+                    </ul>
+                </div>
+
+                <div class="rule-section">
+                    <h4>التاء المربوطة (ة / ـة) وتكتب في:</h4>
+                    <ul>
+                        <li><strong>جمع التكسير الذي لا ينتهي مفرده بتاء:</strong> مثل (رُعَاةٌ، الطُّغَاةُ).</li>
+                        <li><strong>الاسم المفرد المؤنث:</strong> مثل (فَاطِمَةُ، لُعْبَةٌ، مَدْرَسَةٌ).</li>
+                    </ul>
+                </div>
+
+                <button class="close-modal-btn" onclick="closeRuleModal()">إغلاق ✖</button>
+            </div>
+        </div>
+
+        <!-- Screen 0: Welcome -->
+        <div class="screen active" id="screen-welcome">
+            <h1>🏰 مغامرة التاء في مدينة اللغة العربية</h1>
+            <div class="mascot-box">
+                <div class="mascot-avatar">👧</div>
+                <div class="mascot-text">
+                    مرحبًا يا بطل! 🔤 هل أنت مستعد لخوض مغامرة التاء؟ ساعدني في اكتشاف التاء الصحيحة وأسباب كتابتها واجمع النجوم لنصل إلى الكنز!
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="startGame()">ابدأ المغامرة الآن 🚀</button>
+        </div>
+
+        <!-- Screen 1: Choose Ta (Stage 1 & 2) -->
+        <div class="screen" id="screen-stage1">
+            <h2 id="stage-title">🚪 بوابة التاء</h2>
+            <div class="mascot-box">
+                <div class="mascot-avatar">🧐</div>
+                <div class="mascot-text" id="stage1-mascot">اختر الحرف المناسب لإكمال الكلمة بالشكل الصحيح:</div>
+            </div>
+
+            <div class="word-display" id="word-target">مدرسـ...</div>
+
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkTaChoice('ة')">ة / ـة</button>
+                <button class="option-btn" onclick="checkTaChoice('ت')">ت</button>
+            </div>
+
+            <div class="feedback-box" id="feedback-stage1" style="visibility: hidden;"></div>
+
+            <button class="btn" id="next-stage1-btn" style="display: none; margin-top: 15px;" onclick="nextQuestion()">السؤال التالي ⬅️</button>
+        </div>
+
+        <!-- Screen 2: Reason Challenge (Stage 3) -->
+        <div class="screen" id="screen-reason">
+            <h2>📚 مكتبة الأسباب</h2>
+            <div class="mascot-box">
+                <div class="mascot-avatar">💡</div>
+                <div class="mascot-text" id="reason-mascot">لماذا كتبت التاء بهذا الشكل في هذه الكلمة؟</div>
+            </div>
+
+            <div class="word-display" id="reason-word-display">مَدْرَسَةٌ</div>
+
+            <div class="reason-options" id="reason-options-container">
+                <!-- Buttons rendered dynamically -->
+            </div>
+
+            <div class="feedback-box" id="feedback-reason" style="visibility: hidden;"></div>
+
+            <button class="btn" id="next-reason-btn" style="display: none; margin-top: 15px;" onclick="nextQuestion()">السؤال التالي ⬅️</button>
+        </div>
+
+        <!-- Screen 3: Speed Challenge (Stage 4) -->
+        <div class="screen" id="screen-speed">
+            <h2>⚡ تحدي البرق!</h2>
+            <div class="timer-container">
+                <div class="timer-bar" id="timer-bar"></div>
+            </div>
+
+            <div class="word-display" id="speed-word-display">مُعَلِّمَا...</div>
+
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkSpeedChoice('ة')">ة / ـة</button>
+                <button class="option-btn" onclick="checkSpeedChoice('ت')">ت</button>
+            </div>
+
+            <div class="feedback-box" id="feedback-speed" style="visibility: hidden;"></div>
+
+            <button class="btn" id="next-speed-btn" style="display: none; margin-top: 15px;" onclick="nextQuestion()">السؤال التالي ⬅️</button>
+        </div>
+
+        <!-- Screen 4: Final Treasure & Certificate -->
+        <div class="screen" id="screen-final">
+            <h1>🏆 كنز اللغة العربية</h1>
+            
+            <div class="certificate">
+                <h3>🏆 شهادة بطل اللغة العربية 🏆</h3>
+                <p class="cert-body">
+                    يشهد قسم اللغة العربية بأن التلميذ البطل قد أتمّ بنجاح:<br>
+                    <strong>"مغامرة التاء المفتوحة والتاء المربوطة"</strong><br>
+                    وأتقن التمييز بينهما وأسباب كتابتهما بامتياز!
+                </p>
+                <div style="font-size: 1.2rem; margin: 10px 0;">
+                    النقاط الإجمالية: <strong style="color: #0288d1;" id="final-score">180</strong> | 
+                    التقييم: <span id="final-stars">⭐⭐⭐</span>
+                </div>
+                <div class="cert-footer">
+                    <span>إعداد وتصميم: الأستاذة عوادي هاجر</span>
+                    <span>ممتـاز 🌟</span>
+                </div>
+            </div>
+
+            <button class="btn btn-success" style="margin-top: 20px;" onclick="restartGame()">إعادة المغامرة 🔄</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Game Sound Synth (Web Audio API)
+        let audioEnabled = true;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playTone(freq, type, duration) {
+            if (!audioEnabled) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function playCorrectSound() {
+            playTone(523.25, 'sine', 0.15);
+            setTimeout(() => playTone(659.25, 'sine', 0.2), 100);
+            setTimeout(() => playTone(783.99, 'sine', 0.3), 200);
+        }
+
+        function playWrongSound() {
+            playTone(200, 'square', 0.2);
+            setTimeout(() => playTone(150, 'square', 0.25), 150);
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            document.getElementById('audio-toggle').innerText = audioEnabled ? '🔊' : '🔇';
+        }
+
+        // Questions Database aligned with rules from the reference image
+        const questionsDB = [
+            // Stage 1 & 2: Fill Ta
+            { type: 'ta', word: 'مدرسـ', correct: 'ة', full: 'مَدْرَسَةٌ', reason: 'لأنها اسم مفرد مؤنث' },
+            { type: 'ta', word: 'خرَجَـ', correct: 'ت', full: 'خَرَجَتْ', reason: 'لأنها فعل' },
+            { type: 'ta', word: 'رُعَا', correct: 'ة', full: 'رُعَاةٌ', reason: 'لأنها جمع تكسير لا ينتهي مفرده بتاء' },
+            { type: 'ta', word: 'الطَّبِيبَا', correct: 'ت', full: 'الطَّبِيبَاتُ', reason: 'لأنها جمع مؤنث سالم' },
+            { type: 'ta', word: 'زَيْـ', correct: 'ت', full: 'زَيْتٌ', reason: 'لأنها اسم ثلاثي ساكن الوسط' },
+
+            // Stage 3: Reason Selection
+            { 
+                type: 'reason', 
+                word: 'فَاطِمَةُ', 
+                correctReason: 'لأنها اسم مفرد مؤنث',
+                options: [
+                    'لأنها اسم مفرد مؤنث',
+                    'لأنها جمع تكسير',
+                    'لأنها فعل ماضٍ',
+                    'لأنها اسم ثلاثي ساكن الوسط'
+                ]
+            },
+            { 
+                type: 'reason', 
+                word: 'المُعَلِّمَاتُ', 
+                correctReason: 'لأنها جمع مؤنث سالم',
+                options: [
+                    'لأنها جمع مؤنث سالم',
+                    'لأنها اسم مفرد مؤنث',
+                    'لأنها جمع تكسير',
+                    'لأنها فعل'
+                ]
+            },
+            { 
+                type: 'reason', 
+                word: 'لَعِبَتْ', 
+                correctReason: 'لأنها فعل',
+                options: [
+                    'لأنها فعل',
+                    'لأنها اسم ثلاثي ساكن الوسط',
+                    'لأنها جمع مؤنث سالم',
+                    'لأنها اسم مفرد مؤنث'
+                ]
+            },
+            { 
+                type: 'reason', 
+                word: 'الطُّغَاةُ', 
+                correctReason: 'لأنها جمع تكسير لا ينتهي مفرده بتاء',
+                options: [
+                    'لأنها جمع تكسير لا ينتهي مفرده بتاء',
+                    'لأنها جمع مؤنث سالم',
+                    'لأنها فعل',
+                    'لأنها اسم ثلاثي ساكن الوسط'
+                ]
+            },
+
+            // Stage 4: Speed Challenge
+            { type: 'speed', word: 'بِنْـ', correct: 'ت', full: 'بِنْتٌ', reason: 'اسم ثلاثي ساكن الوسط' }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timerInterval = null;
+
+        function updateHeader() {
+            document.getElementById('score').innerText = score;
+            document.getElementById('progress-text').innerText = `${currentQuestionIndex + 1}/${questionsDB.length}`;
+            const fillPercent = ((currentQuestionIndex) / questionsDB.length) * 100;
+            document.getElementById('progress-fill').style.width = `${fillPercent}%`;
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function openRuleModal() { document.getElementById('rule-modal').style.display = 'flex'; }
+        function closeRuleModal() { document.getElementById('rule-modal').style.display = 'none'; }
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questionsDB.length) {
+                endGame();
+                return;
+            }
+
+            updateHeader();
+            const q = questionsDB[currentQuestionIndex];
+
+            if (q.type === 'ta') {
+                showScreen('screen-stage1');
+                document.getElementById('word-target').innerText = q.word + '...';
+                const fb = document.getElementById('feedback-stage1');
+                fb.style.visibility = 'hidden';
+                fb.className = 'feedback-box';
+                document.getElementById('next-stage1-btn').style.display = 'none';
+                enableOptionButtons(true);
+            } 
+            else if (q.type === 'reason') {
+                showScreen('screen-reason');
+                document.getElementById('reason-word-display').innerText = q.word;
+                const container = document.getElementById('reason-options-container');
+                container.innerHTML = '';
+                
+                // Shuffle options
+                const shuffledOpts = [...q.options].sort(() => Math.random() - 0.5);
+                shuffledOpts.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'reason-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkReasonChoice(opt, q.correctReason);
+                    container.appendChild(btn);
+                });
+
+                const fb = document.getElementById('feedback-reason');
+                fb.style.visibility = 'hidden';
+                fb.className = 'feedback-box';
+                document.getElementById('next-reason-btn').style.display = 'none';
+            } 
+            else if (q.type === 'speed') {
+                showScreen('screen-speed');
+                document.getElementById('speed-word-display').innerText = q.word + '...';
+                const fb = document.getElementById('feedback-speed');
+                fb.style.visibility = 'hidden';
+                fb.className = 'feedback-box';
+                document.getElementById('next-speed-btn').style.display = 'none';
+                startTimer();
+            }
+        }
+
+        function enableOptionButtons(enable) {
+            document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = !enable);
+        }
+
+        function checkTaChoice(choice) {
+            const q = questionsDB[currentQuestionIndex];
+            const fb = document.getElementById('feedback-stage1');
+            fb.style.visibility = 'visible';
+
+            if (choice === q.correct) {
+                playCorrectSound();
+                score += 10;
+                fb.innerText = `أحسنت! 🌟 الكلمة هي (${q.full}) - ${q.reason}.`;
+                fb.className = 'feedback-box feedback-correct';
+                enableOptionButtons(false);
+                document.getElementById('next-stage1-btn').style.display = 'inline-block';
+            } else {
+                playWrongSound();
+                fb.innerText = 'حاول مرة أخرى! 💡 فكّر في نوع الكلمة والقاعدة.';
+                fb.className = 'feedback-box feedback-wrong';
+            }
+            updateHeader();
+        }
+
+        function checkReasonChoice(selected, correct) {
+            const fb = document.getElementById('feedback-reason');
+            fb.style.visibility = 'visible';
+
+            if (selected === correct) {
+                playCorrectSound();
+                score += 10;
+                fb.innerText = `إجابة رائعة! 🌟 اخترت السبب الصحيح.`;
+                fb.className = 'feedback-box feedback-correct';
+                document.querySelectorAll('.reason-btn').forEach(b => b.disabled = true);
+                document.getElementById('next-reason-btn').style.display = 'inline-block';
+            } else {
+                playWrongSound();
+                fb.innerText = 'فكّر مجددًا! 💡 راجع بطاقة القاعدة إذا نسيت.';
+                fb.className = 'feedback-box feedback-wrong';
+            }
+            updateHeader();
+        }
+
+        function startTimer() {
+            let timeLeft = 100;
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.style.width = '100%';
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft -= 2;
+                timerBar.style.width = timeLeft + '%';
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    onSpeedTimeout();
+                }
+            }, 200);
+        }
+
+        function checkSpeedChoice(choice) {
+            clearInterval(timerInterval);
+            const q = questionsDB[currentQuestionIndex];
+            const fb = document.getElementById('feedback-speed');
+            fb.style.visibility = 'visible';
+
+            if (choice === q.correct) {
+                playCorrectSound();
+                score += 20;
+                fb.innerText = `سريع وممتاز! ⚡ إجابة صحيحة (+20 نقطة)`;
+                fb.className = 'feedback-box feedback-correct';
+            } else {
+                playWrongSound();
+                fb.innerText = `للأسف إجابة خاطئة! الكلمة هي (${q.full})`;
+                fb.className = 'feedback-box feedback-wrong';
+            }
+            document.getElementById('next-speed-btn').style.display = 'inline-block';
+            updateHeader();
+        }
+
+        function onSpeedTimeout() {
+            const fb = document.getElementById('feedback-speed');
+            fb.style.visibility = 'visible';
+            fb.innerText = 'انتهى الوقت! ⏱️️ حاول أن تكون أسرع في المرة القادمة.';
+            fb.className = 'feedback-box feedback-wrong';
+            document.getElementById('next-speed-btn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function endGame() {
+            showScreen('screen-final');
+            document.getElementById('progress-fill').style.width = '100%';
+            document.getElementById('final-score').innerText = score;
+            
+            let stars = '⭐';
+            if (score >= 100) stars = '⭐⭐⭐';
+            else if (score >= 60) stars = '⭐⭐';
+
+            document.getElementById('final-stars').innerText = stars;
+
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            }
+        }
+
+        function restartGame() {
+            startGame();
+        }
+    </script>
+</body>
+</html>
